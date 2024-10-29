@@ -5,7 +5,14 @@ const  cors = require('cors')
 const app = express()
 const port = 3030;
 
-app.use(cors())
+
+const corsOptions = {
+  origin : [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000'
+  ]
+}
+app.use(cors(corsOptions));
 app.use(require('body-parser').urlencoded({ extended: false }));
 
 const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
@@ -26,7 +33,8 @@ try {
     Dealerships.insertMany(dealerships_data['dealerships']);
   });
   
-} catch (error) {
+} 
+catch (error) {
   res.status(500).json({ error: 'Error fetching documents' });
 }
 

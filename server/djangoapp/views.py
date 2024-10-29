@@ -11,12 +11,14 @@ from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 import logging
 import json
+import requests
 from django.views.decorators.csrf import csrf_exempt
 
 from .populate import initiate
 
 # model import 
 from .models import CarMake, CarModel
+from .dto import DealershipDTO
 
 
 
@@ -93,6 +95,27 @@ def register(request):
 # a list of dealerships
 # def get_dealerships(request):
 # ...
+
+def get_dealers(request):
+    db_url = f'http://127.0.0.1:{3030}/fetchDealers'
+    response = requests.get(db_url)
+    if(response.status_code != 200 ): return HttpResponse(status=500)
+    dealers = []
+    for jsonObj in response.json():
+        dealers.append(
+            {
+                "id"         : jsonObj["id"],
+                "short_name" : jsonObj["short_name"],
+                "full_name"  : jsonObj["full_name"],
+                "city"       : jsonObj["city"],
+                "state"      : jsonObj["state"],
+                "address"    : jsonObj["address"],
+                "zip"        : jsonObj["zip"]
+            }
+        )
+    return JsonResponse({"dealers":dealers})
+    
+
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 # def get_dealer_reviews(request,dealer_id):

@@ -4,14 +4,16 @@ import "../assets/style.css";
 import Header from '../Header/Header';
 import review_icon from "../assets/reviewicon.png"
 
-const Dealers = () => {
+
+function Dealers() {
   const [dealersList, setDealersList] = useState([]);
   // let [state, setState] = useState("")
   let [states, setStates] = useState([])
 
-  // let root_url = window.location.origin
-  let dealer_url ="/djangoapp/get_dealers";
-  
+  //let root_url = window.location.origin;
+  const dealerPort = 8000;
+  const dealer_url = `http://${window.location.hostname}:${dealerPort}/get_dealers`; //`${window.location.host}:${dealerPort}/get_dealers/test`; //"/djangoapp/get_dealers";
+
   let dealer_url_by_state = "/djangoapp/get_dealers/";
  
   const filterDealers = async (state) => {
@@ -26,26 +28,32 @@ const Dealers = () => {
     }
   }
 
-  const get_dealers = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
-    const retobj = await res.json();
-    if(retobj.status === 200) {
-      let all_dealers = Array.from(retobj.dealers)
-      let states = [];
-      all_dealers.forEach((dealer)=>{
-        states.push(dealer.state)
-      });
+  
 
-      setStates(Array.from(new Set(states)))
-      setDealersList(all_dealers)
-    }
-  }
   useEffect(() => {
-    get_dealers();
-  },[]);  
-
+    const get_dealers = async ()=>{
+      try {
+        const resp = await fetch(dealer_url, {
+          method: "GET"
+        });
+        let retobj = await resp.json();
+        if(resp.ok) {
+          let all_dealers = Array.from(retobj.dealers);
+          let states = [];
+          all_dealers.forEach((dealer)=>{
+            states.push(dealer.state)
+          });
+          setStates(Array.from(new Set(states)));
+          setDealersList(all_dealers);
+        }
+        else {
+          throw new Error(`response returned status : ${retobj.status}`);
+        }
+      }
+      catch(error) {console.error(error.message);} 
+    };
+    get_dealers().catch(console.error);
+  },[dealer_url]);
 
 let isLoggedIn = sessionStorage.getItem("username") != null ? true : false;
 return(
@@ -93,4 +101,4 @@ return(
 )
 }
 
-export default Dealers
+export default Dealers;

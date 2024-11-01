@@ -8,8 +8,7 @@ import negative_icon from "../assets/negative.png"
 import review_icon from "../assets/reviewbutton.png"
 import Header from '../Header/Header';
 
-const Dealer = () => {
-
+function Dealer() {
 
   const [dealer, setDealer] = useState({});
   const [reviews, setReviews] = useState([]);
@@ -20,41 +19,50 @@ const Dealer = () => {
   let root_url = curr_url.substring(0,curr_url.indexOf("dealer"));
   let params = useParams();
   let id =params.id;
-  let dealer_url = root_url+`djangoapp/dealer/${id}`;
-  let reviews_url = root_url+`djangoapp/reviews/dealer/${id}`;
+  let dealer_url = root_url+`details/dealer/${id}`; //root_url+`djangoapp/dealer/${id}`;
+  let reviews_url = root_url+`reviews/dealer/${id}`; //root_url+`djangoapp/reviews/dealer/${id}`;
   let post_review = root_url+`postreview/${id}`;
   
-  const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
+  const get_dealer = async ()=> {
+    try {
+      const resp = await fetch(dealer_url, {
       method: "GET"
-    });
-    const retobj = await res.json();
-    
-    if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      setDealer(dealerobjs[0])
+      });
+      const retobj = await resp.json();
+
+      if(resp.ok) {
+        setDealer(retobj.dealer);
+      }
+      else {
+        throw new Error(`response returned status code : ${resp.status}`);
+      }
     }
-  }
+    catch(error) {
+      console.error(error.message);
+    }
+  };
 
   const get_reviews = async ()=>{
-    const res = await fetch(reviews_url, {
+    const resp = await fetch(reviews_url, {
       method: "GET"
     });
-    const retobj = await res.json();
+    const retobj = await resp.json();
     
-    if(retobj.status === 200) {
+    if(resp.ok) {
       if(retobj.reviews.length > 0){
         setReviews(retobj.reviews)
       } else {
         setUnreviewed(true);
       }
     }
-  }
+  };
 
   const senti_icon = (sentiment)=>{
     let icon = sentiment === "positive"?positive_icon:sentiment==="negative"?negative_icon:neutral_icon;
     return icon;
-  }
+  };
+
+  let reviewComps = unreviewed ? <div>No reviews yet! </div> : <text>Loading Reviews....</text>;
 
   useEffect(() => {
     get_dealer();
@@ -75,19 +83,18 @@ return(
       <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
       </div>
       <div class="reviews_panel">
-      {reviews.length === 0 && unreviewed === false ? (
-        <text>Loading Reviews....</text>
-      ):  unreviewed === true? <div>No reviews yet! </div> :
-      reviews.map(review => (
-        <div className='review_panel'>
-          <img src={senti_icon(review.sentiment)} className="emotion_icon" alt='Sentiment'/>
-          <div className='review'>{review.review}</div>
-          <div className="reviewer">{review.name} {review.car_make} {review.car_model} {review.car_year}</div>
-        </div>
-      ))}
+      {reviews.length > 0 ?
+        reviews.map(review => (
+          <div className='review_panel'>
+            <img src={senti_icon(review.sentiment)} className="emotion_icon" alt='Sentiment'/>
+            <div className='review'>{review.review}</div>
+            <div className="reviewer">{review.name} {review.car_make} {review.car_model} {review.car_year}</div>
+          </div>
+        )) : reviewComps
+      }
     </div>  
   </div>
 )
 }
 
-export default Dealer
+export default Dealer;

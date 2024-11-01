@@ -17,11 +17,13 @@ const PostReview = () => {
   let root_url = curr_url.substring(0,curr_url.indexOf("postreview"));
   let params = useParams();
   let id =params.id;
-  let dealer_url = root_url+`djangoapp/dealer/${id}`;
-  let review_url = root_url+`djangoapp/add_review`;
+  let dealer_url = root_url+`details/dealer/${id}`;
+  let review_url = root_url+`reviews/add_review`;
   let carmodels_url = root_url+`djangoapp/get_cars`;
 
-  const postreview = async ()=>{
+  console.log(review_url);
+
+  const postreviewFunc = async ()=>{
     let name = sessionStorage.getItem("firstname")+" "+sessionStorage.getItem("lastname");
     //If the first and second name are stores as null, use the username
     if(name.includes("null")) {
@@ -32,6 +34,8 @@ const PostReview = () => {
       return;
     }
 
+    console.log(model);
+    
     let model_split = model.split(" ");
     let make_chosen = model_split[0];
     let model_chosen = model_split[1];
@@ -61,20 +65,26 @@ const PostReview = () => {
       window.location.href = window.location.origin+"/dealer/"+id;
   }
 
-  }
-  const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
+  };
+  const get_dealer = async ()=> {
+    try {
+      let resp = await fetch(dealer_url, {
       method: "GET"
-    });
-    const retobj = await res.json();
-    
-    if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      if(dealerobjs.length > 0)
-        setDealer(dealerobjs[0])
-    }
-  }
+      });
 
+      let retobj = await resp.json();
+
+      if(resp.status === 200) {
+        setDealer(retobj.dealer);
+      }
+      else {
+        throw new Error(`response returned status code : ${resp.status}`);
+      }
+    }
+    catch(error) {
+      console.error(error.message);
+    }
+  };
   const get_cars = async ()=>{
     const res = await fetch(carmodels_url, {
       method: "GET"
@@ -83,7 +93,8 @@ const PostReview = () => {
     
     let carmodelsarr = Array.from(retobj.CarModels)
     setCarmodels(carmodelsarr)
-  }
+  };
+
   useEffect(() => {
     get_dealer();
     get_cars();
@@ -114,10 +125,10 @@ const PostReview = () => {
       </div>
 
       <div>
-      <button className='postreview' onClick={postreview}>Post Review</button>
+      <button className='postreview' onClick={postreviewFunc}>Post Review</button>
       </div>
     </div>
     </div>
   )
 }
-export default PostReview
+export default PostReview;

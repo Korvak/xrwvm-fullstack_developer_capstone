@@ -118,16 +118,31 @@ def get_dealers(request):
 
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
-# def get_dealer_reviews(request,dealer_id):
-# ...
+def get_dealer_reviews(request,dealer_id):
+    db_url = f'http://127.0.0.1:{3030}/fetchReviews/dealer/{dealer_id}'
+    response = requests.get(db_url)
+    if(response.status_code != 200 ): return HttpResponse(status=500)
+    print( response.json() )
+    result = response.json()
+    return JsonResponse({"reviews": result })
+
 
 # Create a `get_dealer_details` view to render the dealer details
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    db_url = f'http://127.0.0.1:{3030}/fetchDealer/{dealer_id}'
+    response = requests.get(db_url)
+    if(response.status_code != 200 ): return HttpResponse(status=500)
+    result = response.json()[0]
+    return JsonResponse({"dealer": result })
 
 # Create a `add_review` view to submit a review
-# def add_review(request):
-# ...
+def add_review(request):
+    try :
+        db_url = f'http://127.0.0.1:{3030}/insert_review'
+        requests.post( db_url, json = request.body )
+        return JsonResponse({"status" : 200})
+    except:
+        return JsonResponse({"status" : 500})
 
 def get_cars(request):
     count = CarMake.objects.filter().count()

@@ -8,7 +8,8 @@ import review_icon from "../assets/reviewicon.png"
 function Dealers() {
   const [dealersList, setDealersList] = useState([]);
   // let [state, setState] = useState("")
-  let [states, setStates] = useState([])
+  const [states, setStates] = useState([]);
+  const [dealersViewList, setDealersViewList] = useState([]);
 
   //let root_url = window.location.origin;
   const dealerPort = 8000;
@@ -16,7 +17,7 @@ function Dealers() {
 
   let dealer_url_by_state = "/djangoapp/get_dealers/";
  
-  const filterDealers = async (state) => {
+  const filterDealersWithReq = async (state) => {
     dealer_url_by_state = dealer_url_by_state+state;
     const res = await fetch(dealer_url_by_state, {
       method: "GET"
@@ -28,7 +29,19 @@ function Dealers() {
     }
   }
 
-  
+  const filterDealers = (state) => {
+    if (state.toLowerCase() === "all") {
+      setDealersViewList(dealersList);
+    }
+    else if (state === "") {
+      setDealersViewList([]);
+    }
+    else {
+      setDealersViewList(
+          dealersList.filter(dealer => dealer.state === state)
+      );
+    }
+  }
 
   useEffect(() => {
     const get_dealers = async ()=>{
@@ -45,6 +58,7 @@ function Dealers() {
           });
           setStates(Array.from(new Set(states)));
           setDealersList(all_dealers);
+          setDealersViewList(all_dealers);
         }
         else {
           throw new Error(`response returned status : ${retobj.status}`);
@@ -82,7 +96,7 @@ return(
          ):<></>
       }
       </tr>
-     {dealersList.map(dealer => (
+     {dealersViewList.map(dealer => (
         <tr>
           <td>{dealer['id']}</td>
           <td><a href={'/dealer/'+dealer['id']}>{dealer['full_name']}</a></td>

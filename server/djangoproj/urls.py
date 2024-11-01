@@ -29,7 +29,12 @@ urlpatterns = [
     path('login/', TemplateView.as_view(template_name="index.html")),
     path('register/', TemplateView.as_view(template_name="index.html")),
     path('dealers/', TemplateView.as_view(template_name="index.html")),
-    path(route='get_cars', view=views.get_cars, name ='getcars'),
-    path(route='get_dealers', view=views.get_dealers, name = 'getdealers'),
+    path('dealer/<int:dealer_id>', TemplateView.as_view(template_name="index.html")),
+    path('get_cars', view=views.get_cars, name ='getcars'),
+    path('get_dealers', view=views.get_dealers, name = 'getdealers'),
+    path("details/dealer/<int:dealer_id>", view=views.get_dealer_details, name='getdealer'),
+    path("reviews/dealer/<int:dealer_id>", view=views.get_dealer_reviews, name='getdealerreviews'),
+    path('postreview/<int:dealer_id>',TemplateView.as_view(template_name="index.html")),
+    path("reviews/add_review", view=views.add_review, name='addreview'),
     path('', TemplateView.as_view(template_name="Home.html"))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

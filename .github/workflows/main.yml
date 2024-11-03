@@ -62,5 +62,5 @@ jobs:
     - name: Run Linter
       run: |
         # Find all JavaScript files and lint them using local jshint
-        find . -name "*.js" -exec npx jshint {} +
+        find . -name "node_modules" -prune -o -name "*.js" -exec npx jshint {} +
         echo "Linted all the JavaScript files successfully"

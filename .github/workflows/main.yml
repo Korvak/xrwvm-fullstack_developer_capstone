@@ -61,6 +61,6 @@ jobs:
 
     - name: Run Linter
       run: |
-        # Find all JavaScript files and lint them using local jshint
-        npx jshint --config .jshintrc --exclude-path .jshintignore $(find . -name "*.js" ! -path "./node_modules/*")
-        echo "Linted all the JavaScript files successfully"
+          # Run jshint on all .js files, using the .jshintrc and .jshintignore files
+          npx jshint --config ./.jshintrc --exclude-path ./.jshintignore "**/*.js"
+          echo "Linted all the JavaScript files successfully"

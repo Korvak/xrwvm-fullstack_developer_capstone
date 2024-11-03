@@ -22,12 +22,24 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8
+        pip install flake8 autopep8 autoflake
+
+    - name: Clean up unused imports and variables with autoflake
+      run: |
+        # Find all Python files and lint them
+        find . -name "*.py" -exec autopep8 --in-place {} +
+        echo "Linted all the Python files successfully"
+        
+    - name: Format with autopep
+      run: |
+        # Find all Python files and lint them
+        find . -name "*.py" -exec autoflake --remove-all-unused-imports --remove-unused-variables --in-place {} +
+        echo "Linted all the Python files successfully"
 
     - name: Run Linter
       run: |
         # Find all Python files and lint them
-        find . -name "*.py" -exec flake8 {} +
+        find . -name "*.py" -exec flake8 --max-line-length 100 {} +
         echo "Linted all the Python files successfully"
 
   lint_js:

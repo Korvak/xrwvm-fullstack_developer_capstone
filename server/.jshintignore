@@ -1,4 +1,0 @@
-node_modules/
-build/
-dist/
-frontend/src/App.js  # or any other specific files you want to ignore

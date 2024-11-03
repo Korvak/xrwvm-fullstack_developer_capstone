@@ -1,0 +1,46 @@
+{
+    "env": {
+      "browser": true,
+      "esversion" : 8,
+      "node": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended",
+      "plugin:prettier/recommended"  // Enables Prettier integration
+    ],
+    "plugins": [
+      "unused-imports",
+      "react",
+      "prettier"  // Adds Prettier as a plugin
+    ],
+    "rules": {
+      "semi": ["error", "always"],
+      "quotes": ["error", "single"],
+      "no-unused-vars": "warn",
+      "react/prop-types": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "prettier/prettier": "error"  // Throws an error if Prettier formatting isn't followed,
+    },
+    "parserOptions": {
+      "ecmaVersion": 2024,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
+  }

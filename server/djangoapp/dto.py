@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
-#dealer model
+# dealer model
+
 
 @dataclass
-class DealershipDTO :
+class DealershipDTO:
 
     id = int,
     short_name = str
@@ -12,6 +13,7 @@ class DealershipDTO :
     state = str
     address = str
     zip = int
+
 
 def __str__(self):
     return f"{self.full_name} {self.city} {self.zip}"

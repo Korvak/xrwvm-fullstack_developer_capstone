@@ -18,7 +18,6 @@ class CarMake(models.Model):
     name = models.CharField(max_length=50)
     nationality = models.CharField(max_length=20)
     description = models.CharField(max_length=200)
-    
 
     def __str__(self):
         return f"{self.name}"
@@ -35,20 +34,19 @@ class CarMake(models.Model):
 # - __str__ method to print a car make object
 
 
-
 class CarModel(models.Model):
 
     TYPE_CHOICES = {
-        "sedan" : "Sedan",
-        "suv" : "SUV",
-        "wagon" : "WAGON"
+        "sedan": "Sedan",
+        "suv": "SUV",
+        "wagon": "WAGON"
     }
 
     name = models.CharField(max_length=40)
     car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     type = models.CharField(max_length=50, choices=TYPE_CHOICES)
-    year = models.IntegerField( validators=[MinValueValidator(2015), MaxValueValidator(2023)])
+    year = models.IntegerField(
+        validators=[MinValueValidator(2015), MaxValueValidator(2023)])
 
     def __str__(self):
         return f"{self.name} {self.year}"
-

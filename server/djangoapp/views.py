@@ -16,12 +16,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .populate import initiate
 
-# model import 
+# model import
 from .models import CarMake, CarModel
-from .dto import DealershipDTO
-
-
-
 
 
 # Get an instance of a logger
@@ -47,20 +43,24 @@ def login_user(request):
     return JsonResponse(data)
 
 # Create a `logout_request` view to handle sign out request
+
+
 def logout_request(request):
-    if request.user.is_authenticated :
-        data = {"username" : request.user.username}
+    if request.user.is_authenticated:
+        data = {"username": request.user.username}
         logout(request)
         return JsonResponse(data)
-    else :
+    else:
         return JsonResponse(
             {
-                "error" : "user is not logged in"
+                "error": "user is not logged in"
             }
         )
 
 # Create a `registration` view to handle sign up request
 # @csrf_exempt
+
+
 @csrf_exempt
 def register(request):
     context = {}
@@ -76,19 +76,20 @@ def register(request):
         # Check if user already exists
         User.objects.get(username=username)
         username_exist = True
-    except:
+    except Exception as e:
         # If not, simply log this is a new user
         logger.debug("{} is new user".format(username))
     # If it is a new user
     if not username_exist:
         # Create user in auth_user table
-        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,password=password, email=email)
+        user = User.objects.create_user(
+            username=username, first_name=first_name, last_name=last_name, password=password, email=email)
         # Login the user and redirect to list page
         login(request, user)
-        data = {"userName":username,"status":"Authenticated"}
+        data = {"userName": username, "status": "Authenticated"}
         return JsonResponse(data)
-    else :
-        data = {"userName":username,"error":"Already Registered"}
+    else:
+        data = {"userName": username, "error": "Already Registered"}
         return JsonResponse(data)
 
 # # Update the `get_dealerships` view to render the index page with
@@ -96,61 +97,68 @@ def register(request):
 # def get_dealerships(request):
 # ...
 
+
 def get_dealers(request):
     db_url = f'http://127.0.0.1:{3030}/fetchDealers'
     response = requests.get(db_url)
-    if(response.status_code != 200 ): return HttpResponse(status=500)
+    if (response.status_code != 200):
+        return HttpResponse(status=500)
     dealers = []
     for jsonObj in response.json():
         dealers.append(
             {
-                "id"         : jsonObj["id"],
-                "short_name" : jsonObj["short_name"],
-                "full_name"  : jsonObj["full_name"],
-                "city"       : jsonObj["city"],
-                "state"      : jsonObj["state"],
-                "address"    : jsonObj["address"],
-                "zip"        : jsonObj["zip"]
+                "id": jsonObj["id"],
+                "short_name": jsonObj["short_name"],
+                "full_name": jsonObj["full_name"],
+                "city": jsonObj["city"],
+                "state": jsonObj["state"],
+                "address": jsonObj["address"],
+                "zip": jsonObj["zip"]
             }
         )
-    return JsonResponse({"dealers":dealers})
-    
+    return JsonResponse({"dealers": dealers})
 
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
-def get_dealer_reviews(request,dealer_id):
+def get_dealer_reviews(request, dealer_id):
     db_url = f'http://127.0.0.1:{3030}/fetchReviews/dealer/{dealer_id}'
     response = requests.get(db_url)
-    if(response.status_code != 200 ): return HttpResponse(status=500)
-    print( response.json() )
+    if (response.status_code != 200):
+        return HttpResponse(status=500)
+    print(response.json())
     result = response.json()
-    return JsonResponse({"reviews": result })
+    return JsonResponse({"reviews": result})
 
 
 # Create a `get_dealer_details` view to render the dealer details
 def get_dealer_details(request, dealer_id):
     db_url = f'http://127.0.0.1:{3030}/fetchDealer/{dealer_id}'
     response = requests.get(db_url)
-    if(response.status_code != 200 ): return HttpResponse(status=500)
+    if (response.status_code != 200):
+        return HttpResponse(status=500)
     result = response.json()[0]
-    return JsonResponse({"dealer": result })
+    return JsonResponse({"dealer": result})
 
 # Create a `add_review` view to submit a review
+
+
 def add_review(request):
-    try :
+    try:
         db_url = f'http://127.0.0.1:{3030}/insert_review'
-        requests.post( db_url, json = request.body )
-        return JsonResponse({"status" : 200})
+        requests.post(db_url, json=request.body)
+        return JsonResponse({"status": 200})
     except:
-        return JsonResponse({"status" : 500})
+        return JsonResponse({"status": 500})
+
 
 def get_cars(request):
     count = CarMake.objects.filter().count()
     print(count)
-    if(count == 0):
+    if (count == 0):
         initiate()
     car_models = CarModel.objects.select_related('car_make')
     cars = []
     for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
-    return JsonResponse({"CarModels":cars})
+        cars.append({"CarModel": car_model.name,
+                    "CarMake": car_model.car_make.name})
+    return JsonResponse({"CarModels": cars})

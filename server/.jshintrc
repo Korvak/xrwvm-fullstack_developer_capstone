@@ -1,0 +1,5 @@
+{
+    "esversion": 6,
+    "node": true, // If you're using Node.js features
+    "browser": true // If you're targeting browser environment
+  }

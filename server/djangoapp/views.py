@@ -77,6 +77,7 @@ def register(request):
         username_exist = True
     except Exception as e:
         # If not, simply log this is a new user
+        print(e)
         logger.debug("{} is new user".format(username))
     # If it is a new user
     if not username_exist:
@@ -146,7 +147,7 @@ def add_review(request):
         db_url = f'http://127.0.0.1:{3030}/insert_review'
         requests.post(db_url, json=request.body)
         return JsonResponse({"status": 200})
-    except:
+    except Exception as e:
         return JsonResponse({"status": 500})
 
 

@@ -28,13 +28,13 @@ jobs:
       run: |
         # Find all Python files and lint them
         find . -name "*.py" -exec autopep8 --in-place {} +
-        echo "Linted all the Python files successfully"
+        echo "Cleaned all the Python files successfully"
         
     - name: Format with autopep
       run: |
         # Find all Python files and lint them
         find . -name "*.py" -exec autoflake --remove-all-unused-imports --remove-unused-variables --in-place {} +
-        echo "Linted all the Python files successfully"
+        echo "Formatted all the Python files successfully"
 
     - name: Run Linter
       run: |
@@ -56,11 +56,13 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        # Install jshint locally in the project
-        npm install jshint --save-dev
-
+        # Install eslint locally in the project with all the plugins
+        npm install eslint eslint-plugin-import eslint-plugin-react --save-dev
+        #Install Prettier to format the files
+        npm install prettier eslint-config-prettier eslint-plugin-prettier --save-dev
+        
     - name: Run Linter
       run: |
-          # Run jshint on all .js files, using the .jshintrc and .jshintignore files
-          find . -name "node_modules" -prune -o -name "*.js" -exec npx jshint {} +
+          # Run eslint on all .js files, using the .eslintrc.json config file
+          find . -name "node_modules" -prune -o -name "*.{jsx,js}" -exec npx eslint --fix {} +
           echo "Linted all the JavaScript files successfully"

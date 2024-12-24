@@ -15,8 +15,9 @@ function Dealer() {
   const [unreviewed, setUnreviewed] = useState(false);
   const [postReview, setPostReview] = useState(<></>)
 
-  let curr_url = window.location.href;
-  let root_url = curr_url.substring(0,curr_url.indexOf("dealer"));
+  //let curr_url = window.location.href;
+  let root_url = window.location.origin + "/"; //curr_url.substring(0,curr_url.indexOf("dealer"));
+  console.log(root_url);
   let params = useParams();
   let id =params.id;
   let dealer_url = root_url+`details/dealer/${id}`; //root_url+`djangoapp/dealer/${id}`;

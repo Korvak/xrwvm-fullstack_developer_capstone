@@ -12,8 +12,7 @@ function Dealers() {
   const [dealersViewList, setDealersViewList] = useState([]);
 
   //let root_url = window.location.origin;
-  const dealerPort = 8000;
-  const dealer_url = `http://${window.location.hostname}:${dealerPort}/get_dealers`; //`${window.location.host}:${dealerPort}/get_dealers/test`; //"/djangoapp/get_dealers";
+  const dealer_url = `${window.location.origin}/get_dealers`; //`${window.location.host}:${dealerPort}/get_dealers/test`; //"/djangoapp/get_dealers";
 
   let dealer_url_by_state = "/djangoapp/get_dealers/";
  
@@ -28,7 +27,7 @@ function Dealers() {
       setDealersList(state_dealers)
     }
   }
-
+   
   const filterDealers = (state) => {
     if (state.toLowerCase() === "all") {
       setDealersViewList(dealersList);
@@ -58,7 +57,7 @@ function Dealers() {
           });
           setStates(Array.from(new Set(states)));
           setDealersList(all_dealers);
-          setDealersViewList(all_dealers);
+          setDealersViewList(all_dealers);          
         }
         else {
           throw new Error(`response returned status : ${retobj.status}`);
